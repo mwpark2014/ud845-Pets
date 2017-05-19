@@ -12,8 +12,8 @@ import com.example.android.pets.data.PetContract.PetEntry;
 public class PetDBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "shelter.db";
     public static final int DATABASE_VERSION = 1;
-    public static final String CREATE_ENTRIES = "CREATE TABLE " + PetEntry.TABLE_NAME + " ( " +
-            PetEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+    public static final String CREATE_ENTRIES = "CREATE TABLE " + PetEntry.TABLE_NAME + " (" +
+            PetEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + PetEntry.COLUMN_NAME + " TEXT NOT NULL, "
             + PetEntry.COLUMN_BREED + " TEXT, "
             + PetEntry.COLUMN_GENDER + " INTEGER NOT NULL, "
