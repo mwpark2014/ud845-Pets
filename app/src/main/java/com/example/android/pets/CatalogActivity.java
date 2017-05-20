@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.android.pets.data.PetContract;
 import com.example.android.pets.data.PetContract.PetEntry;
 import com.example.android.pets.data.PetDBHelper;
 
@@ -59,6 +60,7 @@ public class CatalogActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         displayDatabaseInfo();
+        Log.d("CatalogActivity", "onStart: made it!");
     }
 
     /**
@@ -69,15 +71,14 @@ public class CatalogActivity extends AppCompatActivity {
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
 
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
+        String[] projection = new String[] {PetEntry.COLUMN_NAME, PetEntry.COLUMN_BREED};
         String selection = PetEntry.COLUMN_GENDER + "?";
         String[] selectionArgs = new String[] {String.valueOf(PetEntry.GENDER_FEMALE)};
         String sortOrder = PetEntry.COLUMN_NAME + " DESC";
         // Perform this raw SQL query "SELECT * FROM pets"
         // to get a Cursor that contains all rows from the pets table.
-        Cursor cursor = db.query(
+
+        /* Cursor cursor = db.query(
                 PetEntry.TABLE_NAME,        //table to query
                 null,                       //columns to return
                 null,                  //columns for the WHERE clause
@@ -85,6 +86,8 @@ public class CatalogActivity extends AppCompatActivity {
                 null,                       //don't group the rows
                 null,                       //don't filter by row groups
                 sortOrder);                 //sort order
+        */
+        Cursor cursor = getContentResolver().query(PetEntry.CONTENT_URI, null, null, null, null);
         try {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
             // pets table in the database).
