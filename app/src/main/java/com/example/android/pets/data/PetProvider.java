@@ -98,7 +98,36 @@ public class PetProvider extends ContentProvider {
      */
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
-        return null;
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case PETS:
+                return insertPet(uri, contentValues);
+            default:
+                throw new IllegalArgumentException("Insertion is not supported for " + uri);
+        }
+    }
+
+    /**
+     * Insert a pet into the database with the given content values. Return the new content URI
+     * for that specific row in the database.
+     */
+    private Uri insertPet(Uri uri, ContentValues values) {
+        int match = sUriMatcher.match(uri);
+        // Get writeable database
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        switch (match) {
+            case PETS:
+                // For the PETS code, query the pets table directly with the given
+                // projection, selection, selection arguments, and sort order. The cursor
+                // could contain multiple rows of the pets table.
+                long id = database.insert(PetEntry.TABLE_NAME, null, values);
+                // Once we know the ID of the new row in the table,
+                // return the new URI with the ID appended to the end of it
+                return ContentUris.withAppendedId(uri, id);
+            default:
+                throw new IllegalArgumentException("Cannot query unknown URI " + uri);
+        }
     }
 
     /**

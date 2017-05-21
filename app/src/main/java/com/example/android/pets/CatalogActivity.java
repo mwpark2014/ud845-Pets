@@ -19,7 +19,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.nfc.Tag;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -28,8 +28,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.android.pets.data.PetContract;
 import com.example.android.pets.data.PetContract.PetEntry;
 import com.example.android.pets.data.PetDBHelper;
 
@@ -38,14 +38,12 @@ import com.example.android.pets.data.PetDBHelper;
  * Displays list of pets that were entered and stored in the app.
  */
 public class CatalogActivity extends AppCompatActivity {
-    private PetDBHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalog);
 
-        mDbHelper = new PetDBHelper(this);
         // Setup FAB to open EditorActivity
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -71,10 +69,10 @@ public class CatalogActivity extends AppCompatActivity {
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
 
-        String[] projection = new String[] {PetEntry.COLUMN_NAME, PetEntry.COLUMN_BREED};
-        String selection = PetEntry.COLUMN_GENDER + "?";
-        String[] selectionArgs = new String[] {String.valueOf(PetEntry.GENDER_FEMALE)};
-        String sortOrder = PetEntry.COLUMN_NAME + " DESC";
+//        String[] projection = new String[] {PetEntry.COLUMN_NAME, PetEntry.COLUMN_BREED};
+//        String selection = PetEntry.COLUMN_GENDER + "?";
+//        String[] selectionArgs = new String[] {String.valueOf(PetEntry.GENDER_FEMALE)};
+//        String sortOrder = PetEntry.COLUMN_NAME + " DESC";
         // Perform this raw SQL query "SELECT * FROM pets"
         // to get a Cursor that contains all rows from the pets table.
 
@@ -88,6 +86,8 @@ public class CatalogActivity extends AppCompatActivity {
                 sortOrder);                 //sort order
         */
         Cursor cursor = getContentResolver().query(PetEntry.CONTENT_URI, null, null, null, null);
+        if(cursor == null)
+            return;
         try {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
             // pets table in the database).
@@ -151,16 +151,21 @@ public class CatalogActivity extends AppCompatActivity {
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
 
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
         ContentValues values = new ContentValues();
         values.put(PetEntry.COLUMN_NAME, "Toto");
         values.put(PetEntry.COLUMN_BREED, "Terrier");
         values.put(PetEntry.COLUMN_GENDER, PetEntry.GENDER_MALE);
         values.put(PetEntry.COLUMN_WEIGHT, "Toto");
 
-        db.insert(PetEntry.TABLE_NAME, null, values);
+        Uri newUri = getContentResolver().insert(PetEntry.CONTENT_URI, values);
+        if(newUri == null) {
+            Toast.makeText(this, getString(R.string.editor_insert_pet_failed),
+                    Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, getString(R.string.editor_insert_pet_success),
+                    Toast.LENGTH_SHORT).show();
+        }
         displayDatabaseInfo();
     }
 
