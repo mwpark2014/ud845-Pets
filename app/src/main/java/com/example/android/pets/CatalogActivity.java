@@ -58,7 +58,6 @@ public class CatalogActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         displayDatabaseInfo();
-        Log.d("CatalogActivity", "onStart: made it!");
     }
 
     /**

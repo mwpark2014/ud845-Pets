@@ -117,7 +117,8 @@ public class EditorActivity extends AppCompatActivity {
     private void insertPet() {
         String nameString = mNameEditText.getText().toString();
         String breedString = mBreedEditText.getText().toString();
-        int weightInt = Integer.parseInt(mWeightEditText.getText().toString());
+        Integer weightInt = TextUtils.isEmpty(mWeightEditText.getText().toString()) ? 0 :
+                Integer.parseInt(mWeightEditText.getText().toString());
         //mGender
 
         ContentValues values = new ContentValues();
