@@ -137,6 +137,7 @@ public class EditorActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu options from the res/menu/menu_editor.xml file.
@@ -158,7 +159,8 @@ public class EditorActivity extends AppCompatActivity {
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
-                // Do nothing for now
+                //Exit activity
+                finish();
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
