@@ -42,7 +42,6 @@ public class PetProvider extends ContentProvider {
      */
     @Override
     public boolean onCreate() {
-        // TODO: Create and initialize a PetDbHelper object to gain access to the pets database.
         // Make sure the variable is a global variable, so it can be referenced from other
         // ContentProvider methods.
         mDbHelper = new PetDBHelper(getContext());
@@ -90,6 +89,8 @@ public class PetProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
+
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 
@@ -129,6 +130,9 @@ public class PetProvider extends ContentProvider {
             throw new IllegalArgumentException("Pet requires a valid weight");
         }
         long id = database.insert(PetEntry.TABLE_NAME, null, values);
+
+        getContext().getContentResolver().notifyChange(uri, null);
+
         // Once we know the ID of the new row in the table,
         // return the new URI with the ID appended to the end of it
         return ContentUris.withAppendedId(uri, id);
@@ -182,8 +186,10 @@ public class PetProvider extends ContentProvider {
                 throw new IllegalArgumentException("Pet requires a valid weight");
             }
         }
-
-        return database.update(PetEntry.TABLE_NAME, values, selection, selectionArgs);
+        int rowsUpdated = database.update(PetEntry.TABLE_NAME, values, selection, selectionArgs);
+        if(rowsUpdated != 0)
+            getContext().getContentResolver().notifyChange(uri, null);
+        return rowsUpdated;
     }
     /**
      * Delete the data at the given selection and selection arguments.
@@ -208,7 +214,10 @@ public class PetProvider extends ContentProvider {
 
     private int deletePet(Uri uri, String selection, String[] selectionArgs) {
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
-        return database.delete(PetEntry.TABLE_NAME, selection, selectionArgs);
+        int rowsDeleted = database.delete(PetEntry.TABLE_NAME, selection, selectionArgs);
+                if(rowsDeleted != 0)
+                    getContext().getContentResolver().notifyChange(uri, null);
+        return rowsDeleted;
     }
     /**
      * Returns the MIME type of data for the content URI.
